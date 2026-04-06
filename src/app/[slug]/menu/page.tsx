@@ -47,4 +47,4 @@ const RestaurantMenuPage = async ({
 
 export default RestaurantMenuPage;
 
-// http://localhost:3000/fsw-donalds/menu?consumptionMethod=dine_in
+// http://localhost:3000/mec-donalds/menu?consumptionMethod=dine_in
