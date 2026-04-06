@@ -13,6 +13,7 @@ interface RestaurantHeaderProps {
 
 const RestaurantHeader = ({ restaurant }: RestaurantHeaderProps) => {
   const router = useRouter();
+  console.log("Route", router)
   const handleBackClick = () => router.back();
   return (
     <div className="relative h-[250px] w-full">

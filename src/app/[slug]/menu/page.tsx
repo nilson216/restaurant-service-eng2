@@ -19,7 +19,9 @@ const RestaurantMenuPage = async ({
   searchParams,
 }: RestaurantMenuPageProps) => {
   const { slug } = await params;
+  console.log(params)
   const { consumptionMethod } = await searchParams;
+  console.log(searchParams)
   if (!isConsumptionMethodValid(consumptionMethod)) {
     return notFound();
   }
@@ -31,6 +33,7 @@ const RestaurantMenuPage = async ({
       },
     },
   });
+  console.log(restaurant)
   if (!restaurant) {
     return notFound();
   }
