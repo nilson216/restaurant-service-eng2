@@ -8,7 +8,7 @@ export default function LoginPage() {
       <div className="mb-8 flex flex-col items-center gap-2">
         <Image
           src="/logo.png"
-          alt="FSW Donalds"
+          alt="MEC Donalds"
           width={150}
           height={150}
           className="rounded-full shadow-lg"
