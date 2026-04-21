@@ -23,6 +23,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "upload.wikimedia.org", // imagens públicas
       },
+      {
+        protocol: "https",
+        hostname: "tse1.mm.bing.net",
+      },
     ],
   },
 };
