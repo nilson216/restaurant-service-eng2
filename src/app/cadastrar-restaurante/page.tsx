@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { forwardRef, useActionState, useEffect, useRef } from "react";
 
 import { createRestaurant } from "./actions";
@@ -28,29 +29,29 @@ export default function CreateRestaurantPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0f0f0f] flex items-center justify-center p-4 font-sans">
-      <div
-        className="pointer-events-none fixed inset-0 overflow-hidden"
-        aria-hidden
-      >
-        <div className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full bg-orange-500/10 blur-[120px]" />
-        <div className="absolute -bottom-40 -left-40 h-[500px] w-[500px] rounded-full bg-orange-700/10 blur-[120px]" />
-      </div>
-
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-4 font-sans">
       <div className="relative w-full max-w-lg animate-fade-in">
-        <div className="mb-8 text-center">
-          <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-500 text-2xl shadow-lg shadow-orange-500/30">
-            🍽️
-          </div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">
-            Cadastrar Restaurante
+        {/* LOGO */}
+        <div className="mb-8 flex flex-col items-center gap-2 text-center">
+          <Image
+            src="/logo.png"
+            alt="MEC Donalds"
+            width={120}
+            height={120}
+            className="rounded-full shadow-lg"
+          />
+          <h1 className="text-xl font-bold tracking-tight text-[#00437A]">
+            Univali Services
           </h1>
-          <p className="mt-2 text-sm text-zinc-400">
+          <p className="mt-2 text-sm text-gray-600">
             Preencha as informações abaixo para adicionar um novo restaurante.
           </p>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-md">
+        <div className="rounded-2xl border-none bg-white p-8 shadow-xl">
+          <h2 className="mb-6 text-2xl font-bold text-gray-900">
+            Cadastrar Restaurante
+          </h2>
           <form action={formAction} className="space-y-5">
             <Field
               id="name"
@@ -74,9 +75,9 @@ export default function CreateRestaurantPage() {
             <div className="space-y-1.5">
               <label
                 htmlFor="description"
-                className="block text-sm font-medium text-zinc-300"
+                className="block text-sm font-medium text-gray-700"
               >
-                Descrição <span className="text-orange-400">*</span>
+                Descrição <span className="text-[#00437A]">*</span>
               </label>
               <textarea
                 id="description"
@@ -84,7 +85,7 @@ export default function CreateRestaurantPage() {
                 rows={3}
                 placeholder="Ex: O melhor prato feito da universidade!"
                 required
-                className="w-full resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition focus:border-orange-500/60 focus:ring-2 focus:ring-orange-500/20"
+                className="w-full resize-none rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-400 outline-none transition focus:border-[#00437A]/60 focus:ring-2 focus:ring-[#00437A]/20"
               />
             </div>
 
@@ -103,12 +104,12 @@ export default function CreateRestaurantPage() {
               />
             </div>
 
-            <div className="border-t border-white/10 pt-2" />
+            <div className="border-t border-gray-100 pt-2" />
 
             <button
               type="submit"
               disabled={pending}
-              className="relative w-full overflow-hidden rounded-xl bg-orange-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-orange-500/25 transition-all hover:bg-orange-400 hover:shadow-orange-500/40 disabled:cursor-not-allowed disabled:opacity-60"
+              className="relative w-full overflow-hidden rounded-xl bg-[#00437A] px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:bg-[#005DA4] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {pending ? (
                 <span className="flex items-center justify-center gap-2">
@@ -121,8 +122,8 @@ export default function CreateRestaurantPage() {
           </form>
         </div>
 
-        <p className="mt-6 text-center text-xs text-zinc-600">
-          Campos marcados com <span className="text-orange-400">*</span> são
+        <p className="mt-6 text-center text-xs text-gray-500">
+          Campos marcados com <span className="text-[#00437A]">*</span> são
           obrigatórios.
         </p>
       </div>
@@ -154,8 +155,8 @@ const Field = forwardRef<HTMLInputElement, FieldProps>(function Field(
 ) {
   return (
     <div className="space-y-1.5">
-      <label htmlFor={id} className="block text-sm font-medium text-zinc-300">
-        {label} {required && <span className="text-orange-400">*</span>}
+      <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+        {label} {required && <span className="text-[#00437A]">*</span>}
       </label>
       <input
         ref={ref}
@@ -165,9 +166,9 @@ const Field = forwardRef<HTMLInputElement, FieldProps>(function Field(
         required={required}
         onChange={onChange}
         onFocus={onFocus}
-        className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition focus:border-orange-500/60 focus:ring-2 focus:ring-orange-500/20"
+        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 outline-none transition focus:border-[#00437A]/60 focus:ring-2 focus:ring-[#00437A]/20"
       />
-      {hint && <p className="text-xs text-zinc-500">{hint}</p>}
+      {hint && <p className="text-xs text-gray-400">{hint}</p>}
     </div>
   );
 });
