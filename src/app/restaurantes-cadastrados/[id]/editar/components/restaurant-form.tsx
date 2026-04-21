@@ -34,29 +34,29 @@ export default function RestaurantForm({ restaurant }: RestaurantFormProps) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0f0f0f] flex items-center justify-center p-4 font-sans">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 font-sans">
       <div
         className="pointer-events-none fixed inset-0 overflow-hidden"
         aria-hidden
       >
-        <div className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full bg-orange-500/10 blur-[120px]" />
-        <div className="absolute -bottom-40 -left-40 h-[500px] w-[500px] rounded-full bg-orange-700/10 blur-[120px]" />
+        <div className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full bg-blue-500/10 blur-[120px]" />
+        <div className="absolute -bottom-40 -left-40 h-[500px] w-[500px] rounded-full bg-blue-700/10 blur-[120px]" />
       </div>
 
       <div className="relative w-full max-w-lg animate-fade-in">
         <div className="mb-8 text-center">
-          <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-500 text-2xl shadow-lg shadow-orange-500/30">
+          <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#00437A] text-2xl shadow-lg shadow-blue-500/30 text-white">
             🍴
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
             Editar Restaurante
           </h1>
-          <p className="mt-2 text-sm text-zinc-400">
+          <p className="mt-2 text-sm text-gray-600">
             Atualize as informações do seu restaurante.
           </p>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-md">
+        <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-2xl backdrop-blur-md">
           <form action={formAction} className="space-y-5">
             <Field
               id="name"
@@ -84,9 +84,9 @@ export default function RestaurantForm({ restaurant }: RestaurantFormProps) {
             <div className="space-y-1.5">
               <label
                 htmlFor="description"
-                className="block text-sm font-medium text-zinc-300"
+                className="block text-sm font-medium text-gray-700"
               >
-                Descrição <span className="text-orange-400">*</span>
+                Descrição <span className="text-red-500">*</span>
               </label>
               <textarea
                 id="description"
@@ -95,7 +95,7 @@ export default function RestaurantForm({ restaurant }: RestaurantFormProps) {
                 placeholder="Ex: O melhor prato feito da universidade!"
                 required
                 defaultValue={restaurant.description}
-                className="w-full resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition focus:border-orange-500/60 focus:ring-2 focus:ring-orange-500/20"
+                className="w-full resize-none rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-400 outline-none transition focus:border-[#00437A] focus:ring-2 focus:ring-[#00437A]/20"
               />
               {state?.fieldErrors?.description && (
                 <p className="text-xs text-red-500">{state.fieldErrors.description}</p>
@@ -121,7 +121,7 @@ export default function RestaurantForm({ restaurant }: RestaurantFormProps) {
               />
             </div>
 
-            <div className="border-t border-white/10 pt-2" />
+            <div className="border-t border-gray-100 pt-2" />
 
             {state?.error && (
               <p className="text-center text-sm font-medium text-red-500">{state.error}</p>
@@ -131,14 +131,14 @@ export default function RestaurantForm({ restaurant }: RestaurantFormProps) {
               <button
                 type="button"
                 onClick={() => window.history.back()}
-                className="flex-1 rounded-xl border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-zinc-300 transition hover:bg-white/10"
+                className="flex-1 rounded-xl border border-gray-200 bg-white px-6 py-3 text-sm font-semibold text-gray-600 transition hover:bg-gray-50"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={pending}
-                className="relative flex-[2] overflow-hidden rounded-xl bg-orange-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-orange-500/25 transition-all hover:bg-orange-400 hover:shadow-orange-500/40 disabled:cursor-not-allowed disabled:opacity-60"
+                className="relative flex-[2] overflow-hidden rounded-xl bg-[#00437A] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition-all hover:bg-[#005DA4] hover:shadow-blue-500/40 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {pending ? (
                   <span className="flex items-center justify-center gap-2">
@@ -152,8 +152,8 @@ export default function RestaurantForm({ restaurant }: RestaurantFormProps) {
           </form>
         </div>
 
-        <p className="mt-6 text-center text-xs text-zinc-600">
-          Campos marcados com <span className="text-orange-400">*</span> são
+        <p className="mt-6 text-center text-xs text-gray-400">
+          Campos marcados com <span className="text-red-500">*</span> são
           obrigatórios.
         </p>
       </div>
@@ -187,8 +187,8 @@ const Field = forwardRef<HTMLInputElement, FieldProps>(function Field(
 ) {
   return (
     <div className="space-y-1.5">
-      <label htmlFor={id} className="block text-sm font-medium text-zinc-300">
-        {label} {required && <span className="text-orange-400">*</span>}
+      <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+        {label} {required && <span className="text-red-500">*</span>}
       </label>
       <input
         ref={ref}
@@ -199,10 +199,10 @@ const Field = forwardRef<HTMLInputElement, FieldProps>(function Field(
         defaultValue={defaultValue}
         onChange={onChange}
         onFocus={onFocus}
-        className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition focus:border-orange-500/60 focus:ring-2 focus:ring-orange-500/20"
+        className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 outline-none transition focus:border-[#00437A] focus:ring-2 focus:ring-[#00437A]/20"
       />
       {error && <p className="text-xs text-red-500">{error}</p>}
-      {hint && !error && <p className="text-xs text-zinc-500">{hint}</p>}
+      {hint && !error && <p className="text-xs text-gray-400">{hint}</p>}
     </div>
   );
 });
