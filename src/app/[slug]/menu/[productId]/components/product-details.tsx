@@ -26,19 +26,18 @@ interface ProductDetailsProps {
 }
 
 const ProductDetails = ({ product }: ProductDetailsProps) => {
-  console.log('produtos',product)
   const { toggleCart, addProduct } = useContext(CartContext);
   const [quantity, setQuantity] = useState<number>(1);
   const handleDecreaseQuantity = () => {
-    setQuantity((quantity) => {
-      if (quantity === 1) {
+    setQuantity((prev) => {
+      if (prev === 1) {
         return 1;
       }
-      return quantity - 1;
+      return prev - 1;
     });
   };
   const handleIncreaseQuantity = () => {
-    setQuantity((quantity) => quantity + 1);
+    setQuantity((prev) => prev + 1);
   };
   const handleAddToCart = () => {
     addProduct({
@@ -117,7 +116,7 @@ const ProductDetails = ({ product }: ProductDetailsProps) => {
         </div>
 
         <Button className="w-full rounded-full" onClick={handleAddToCart}>
-          Adicionar ao Carrinho
+          Adicionar à sacola
         </Button>
       </div>
       <CartSheet />
