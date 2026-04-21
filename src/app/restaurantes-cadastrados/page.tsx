@@ -125,9 +125,17 @@ export default async function RestaurantesCadastradosPage() {
                     </Link>
                     <Link
                       href={`/restaurantes-cadastrados/${r.id}/editar`}
-                      className="flex-1 rounded-xl bg-[#00437A]/10 py-2 text-center text-sm font-medium text-[#00437A] transition hover:bg-[#00437A]/20"
+                      className="rounded-xl bg-gray-100 px-3 py-2 text-center text-sm font-medium text-gray-600 transition hover:bg-gray-200"
+                      title="Editar informações do restaurante"
                     >
                       Editar
+                    </Link>
+                    <Link
+                      href={`/restaurantes-cadastrados/${r.id}/menu`}
+                      className="rounded-xl bg-[#00437A]/10 px-3 py-2 text-center text-sm font-medium text-[#00437A] transition hover:bg-[#00437A]/20"
+                      title="Gerenciar categorias e produtos"
+                    >
+                      Cardápio
                     </Link>
                   </div>
                 </div>
