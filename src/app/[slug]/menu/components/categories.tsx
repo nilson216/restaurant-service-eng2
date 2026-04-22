@@ -25,6 +25,27 @@ type MenuCategoriesWithProducts = Prisma.MenuCategoryGetPayload<{
 }>;
 
 const RestaurantCategories = ({ restaurant }: RestaurantCategoriesProps) => {
+  // Se não tiver categorias, retorna null
+  if (!restaurant.menuCategories || restaurant.menuCategories.length === 0) {
+    return (
+      <div className="relative z-50 mt-[-1.5rem] rounded-t-3xl bg-white p-5">
+        <div className="flex items-center gap-3">
+          <Image
+            src={restaurant.avatarImageUrl}
+            alt={restaurant.name}
+            height={45}
+            width={45}
+          />
+          <div>
+            <h2 className="text-lg font-semibold">{restaurant.name}</h2>
+            <p className="text-xs opacity-55">{restaurant.description}</p>
+          </div>
+        </div>
+        <p className="mt-4 text-sm text-gray-500">Nenhuma categoria disponível no momento.</p>
+      </div>
+    );
+  }
+
   const [selectedCategory, setSelectedCategory] =
     useState<MenuCategoriesWithProducts>(restaurant.menuCategories[0]);
 
@@ -32,7 +53,7 @@ const RestaurantCategories = ({ restaurant }: RestaurantCategoriesProps) => {
     setSelectedCategory(category);
   };
   const getCategoryButtonVariant = (category: MenuCategoriesWithProducts) => {
-    return selectedCategory.id === category.id ? "default" : "secondary";
+    return selectedCategory?.id === category.id ? "default" : "secondary";
   };
   return (
     <div className="relative z-50 mt-[-1.5rem] rounded-t-3xl bg-white">
@@ -72,8 +93,8 @@ const RestaurantCategories = ({ restaurant }: RestaurantCategoriesProps) => {
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
 
-      <h3 className="px-5 pt-2 font-semibold">{selectedCategory.name}</h3>
-      <Products products={selectedCategory.products} />
+      <h3 className="px-5 pt-2 font-semibold">{selectedCategory?.name}</h3>
+      {selectedCategory && <Products products={selectedCategory.products} />}
     </div>
   );
 };

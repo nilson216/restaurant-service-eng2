@@ -1,4 +1,4 @@
-import { PlusIcon, UtensilsCrossed } from "lucide-react";
+import { CirclePlus, UtensilsCrossed } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -26,7 +26,7 @@ export default async function RestaurantesCadastradosPage() {
     <div className="min-h-screen bg-gray-50 text-gray-900">
       <div className="relative mx-auto max-w-6xl px-6 py-12">
         {/* Header */}
-        <div className="mb-10 flex items-center justify-between">
+        <div className="mb-10 flex flex-row gap-4 sm:flex-row sm:items-center sm:justify-between ">
           <div>
             <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-[#00437A]">
               Painel de gestão
@@ -42,10 +42,10 @@ export default async function RestaurantesCadastradosPage() {
 
           <Link
             href="/cadastrar-restaurante"
-            className="flex items-center gap-2 rounded-xl bg-[#00437A] px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:bg-[#005DA4]"
+            className="rounded-lg pl-13 pt-7 text-[#000000] hover:bg-gray-200 transition m"
+            title="Novo Restaurante"
           >
-            <PlusIcon size={16} />
-            Novo Restaurante
+            <CirclePlus size={32} />
           </Link>
         </div>
 

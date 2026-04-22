@@ -1,5 +1,13 @@
-const HomePage = () => {
-  return <h1>hello world</h1>;
-};
+// app/page.tsx
+import { auth } from '@clerk/nextjs/server';
+import { redirect } from 'next/navigation';
 
-export default HomePage;
+export default async function Page() {
+  const { userId } = await auth();
+
+  if (!userId) {
+    redirect('/login');
+  }
+
+  redirect('/restaurantes-cadastrados');
+}
