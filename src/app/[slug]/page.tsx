@@ -12,7 +12,6 @@ interface RestaurantPageProps {
 const RestaurantPage = async ({ params }: RestaurantPageProps) => {
   const { slug } = await params;
   const restaurant = await db.restaurant.findUnique({ where: { slug } });
-  console.log(restaurant)
   if (!restaurant) {
     return notFound();
   }
@@ -36,7 +35,7 @@ const RestaurantPage = async ({ params }: RestaurantPageProps) => {
           oferecer praticidade e sabor em cada detalhe!
         </p>
       </div>
-      <div className="grid grid-cols-2 gap-4 pt-10">
+      <div className="grid grid-cols-2 gap-4 pt-14">
         <ConsumptionMethodOption
           slug={slug}
           option="DINE_IN"
