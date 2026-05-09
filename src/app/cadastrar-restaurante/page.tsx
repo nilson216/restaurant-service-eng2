@@ -119,9 +119,9 @@ export default function CreateRestaurantPage() {
           {/* Erros */}
           {state?.fieldErrors && (
             <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-              {Object.entries(state.fieldErrors).map(([key, value]: any) => (
+              {Object.entries(state.fieldErrors).map(([key, value]) => (
                 <p key={key} className="text-sm text-red-600">
-                  {value}
+                  {Array.isArray(value) ? value.join(", ") : String(value)}
                 </p>
               ))}
             </div>

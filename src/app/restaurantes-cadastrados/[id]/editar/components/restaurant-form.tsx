@@ -1,7 +1,7 @@
 "use client";
 
-import { forwardRef, useActionState, useEffect, useRef } from "react";
 import { Restaurant } from "@prisma/client";
+import { forwardRef, useActionState, useEffect, useRef } from "react";
 
 import { updateRestaurant } from "../actions";
 
