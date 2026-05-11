@@ -13,8 +13,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "FSW Donalds",
-  description: "Bora finalizar esse projeto lindo!",
+  title: "Univali Services",
+  description: "Univali Services",
 };
 
 export default function RootLayout({
