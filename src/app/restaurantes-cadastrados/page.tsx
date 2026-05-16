@@ -42,7 +42,7 @@ export default async function RestaurantesCadastradosPage() {
 
           <Link
             href="/cadastrar-restaurante"
-            className="rounded-lg pl-13 pt-7 text-[#000000] hover:bg-gray-200 transition m"
+            className="rounded-lg pl-13 text-[#000000] hover:bg-gray-200 transition m"
             title="Novo Restaurante"
           >
             <CirclePlus size={32} />
