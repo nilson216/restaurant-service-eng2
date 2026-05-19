@@ -1,13 +1,5 @@
-// app/page.tsx
-import { auth } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
+import { RedirectHome } from './redirect-home';
 
-export default async function Page() {
-  const { userId } = await auth();
-
-  if (!userId) {
-    redirect('/login');
-  }
-
-  redirect('/restaurantes-cadastrados');
+export default function Page() {
+  return <RedirectHome />;
 }

@@ -1,26 +1,69 @@
-import { CirclePlus, UtensilsCrossed } from "lucide-react";
+import { AlertCircle, ChevronLeft, ChevronRight,CirclePlus, UtensilsCrossed } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 import { db } from "@/lib/prisma";
+import { isValidUrl } from "@/lib/validators";
 
-function validUrl(url: string | null): string | null {
-  if (!url) return null;
-  try {
-    const p = new URL(url);
-    return ["http:", "https:"].includes(p.protocol) ? url : null;
-  } catch {
-    return null;
-  }
+const RESTAURANTS_PER_PAGE = 12;
+
+interface PageProps {
+  searchParams: Promise<{ page?: string }>;
 }
 
-export default async function RestaurantesCadastradosPage() {
-  const restaurants = await db.restaurant.findMany({
-    orderBy: { name: "asc" },
-    include: {
-      _count: { select: { products: true, menuCategories: true, orders: true } },
-    },
-  });
+export default async function RestaurantesCadastradosPage({ searchParams }: PageProps) {
+  const { page: pageParam } = await searchParams;
+  const currentPage = Math.max(1, parseInt(pageParam || "1", 10));
+
+  type RestaurantWithCount = Awaited<
+    ReturnType<typeof db.restaurant.findMany<{
+      include: { _count: { select: { products: true; menuCategories: true; orders: true } } };
+    }>>
+  >;
+
+  let restaurants: RestaurantWithCount = [];
+  let totalCount = 0;
+  let error: string | null = null;
+
+  try {
+    // Buscar total de restaurantes
+    totalCount = await db.restaurant.count();
+
+    // Buscar restaurantes da página atual
+    restaurants = await db.restaurant.findMany({
+      orderBy: { name: "asc" },
+      skip: (currentPage - 1) * RESTAURANTS_PER_PAGE,
+      take: RESTAURANTS_PER_PAGE,
+      include: {
+        _count: { select: { products: true, menuCategories: true, orders: true } },
+      },
+    });
+  } catch (err) {
+    console.error("[RestaurantesCadastradosPage]", err);
+    error = "Erro ao carregar restaurantes. Tente novamente mais tarde.";
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 text-gray-900 flex items-center justify-center p-4">
+        <div className="text-center max-w-md">
+          <AlertCircle size={48} className="mx-auto mb-4 text-red-500" />
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Oops!</h1>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-[#00437A] hover:bg-[#005DA4] text-white font-semibold py-2 px-6 rounded-lg transition"
+          >
+            Tentar Novamente
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const totalPages = Math.ceil(totalCount / RESTAURANTS_PER_PAGE);
+  const hasPreviousPage = currentPage > 1;
+  const hasNextPage = currentPage < totalPages;
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
@@ -63,12 +106,12 @@ export default async function RestaurantesCadastradosPage() {
         {/* Grid */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {restaurants.map((r) => {
-            const cover =
-              validUrl(r.coverImageUrl) ??
-              "https://placehold.co/800x300/e5e7eb/9ca3af?text=Sem+Capa";
-            const avatar =
-              validUrl(r.avatarImageUrl) ??
-              "https://placehold.co/100x100/e5e7eb/9ca3af?text=Logo";
+            const cover = isValidUrl(r.coverImageUrl)
+              ? r.coverImageUrl
+              : "https://placehold.co/800x300/e5e7eb/9ca3af?text=Sem+Capa";
+            const avatar = isValidUrl(r.avatarImageUrl)
+              ? r.avatarImageUrl
+              : "https://placehold.co/100x100/e5e7eb/9ca3af?text=Logo";
 
             return (
               <div
@@ -82,6 +125,7 @@ export default async function RestaurantesCadastradosPage() {
                     alt={r.name}
                     fill
                     unoptimized
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover transition duration-500 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent" />
@@ -90,7 +134,13 @@ export default async function RestaurantesCadastradosPage() {
                 {/* Avatar + name */}
                 <div className="relative -mt-7 flex items-end gap-3 px-5">
                   <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border-2 border-white bg-gray-100 shadow-lg">
-                    <Image src={avatar} alt={r.name} fill unoptimized className="object-cover" />
+                    <Image
+                      src={avatar}
+                      alt={r.name}
+                      fill
+                      unoptimized
+                      className="object-cover"
+                    />
                   </div>
                   <h2 className="mb-1 truncate text-base font-bold leading-tight text-gray-900">
                     {r.name}
@@ -135,6 +185,64 @@ export default async function RestaurantesCadastradosPage() {
             );
           })}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="mt-8 flex items-center justify-center gap-2">
+            <Link
+              href={`/restaurantes-cadastrados?page=${currentPage - 1}`}
+              className={`flex items-center gap-2 rounded-lg px-4 py-2 font-medium transition ${
+                hasPreviousPage
+                  ? "border border-gray-200 text-gray-700 hover:bg-gray-100"
+                  : "cursor-not-allowed border border-gray-100 text-gray-400"
+              }`}
+              style={{ pointerEvents: hasPreviousPage ? "auto" : "none" }}
+            >
+              <ChevronLeft size={18} />
+              Anterior
+            </Link>
+
+            <div className="flex items-center gap-1">
+              {Array.from({ length: totalPages }).map((_, i) => {
+                const page = i + 1;
+                const isCurrentPage = page === currentPage;
+                return (
+                  <Link
+                    key={page}
+                    href={`/restaurantes-cadastrados?page=${page}`}
+                    className={`h-9 w-9 rounded-lg font-medium transition ${
+                      isCurrentPage
+                        ? "bg-[#00437A] text-white"
+                        : "border border-gray-200 text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    {page}
+                  </Link>
+                );
+              })}
+            </div>
+
+            <Link
+              href={`/restaurantes-cadastrados?page=${currentPage + 1}`}
+              className={`flex items-center gap-2 rounded-lg px-4 py-2 font-medium transition ${
+                hasNextPage
+                  ? "border border-gray-200 text-gray-700 hover:bg-gray-100"
+                  : "cursor-not-allowed border border-gray-100 text-gray-400"
+              }`}
+              style={{ pointerEvents: hasNextPage ? "auto" : "none" }}
+            >
+              Próximo
+              <ChevronRight size={18} />
+            </Link>
+          </div>
+        )}
+
+        {/* Page info */}
+        {totalPages > 1 && (
+          <p className="mt-4 text-center text-sm text-gray-500">
+            Página {currentPage} de {totalPages} • Exibindo {restaurants.length} de {totalCount} restaurantes
+          </p>
+        )}
       </div>
     </div>
   );

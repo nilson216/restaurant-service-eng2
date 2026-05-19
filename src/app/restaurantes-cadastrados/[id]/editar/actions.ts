@@ -1,9 +1,17 @@
 "use server";
 
+import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { db } from "@/lib/prisma";
+import {
+  generateSlug,
+  validateRestaurantName,
+  validateRestaurantDescription,
+  validateImageUrl,
+  PLACEHOLDER_IMAGES,
+} from "@/lib/validators";
 
 export type ActionState = {
   success?: boolean;
@@ -11,35 +19,33 @@ export type ActionState = {
   fieldErrors?: Partial<Record<string, string>>;
 };
 
-function generateSlug(name: string): string {
-  return name
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9\s-]/g, "")
-    .trim()
-    .replace(/\s+/g, "-");
-}
-
-function isValidUrl(url: string): boolean {
-  try {
-    const parsed = new URL(url);
-    return ["http:", "https:"].includes(parsed.protocol);
-  } catch {
-    return false;
-  }
-}
-
-const PLACEHOLDER_AVATAR =
-  "https://placehold.co/200x200/orange/white?text=Logo";
-const PLACEHOLDER_COVER =
-  "https://placehold.co/1200x400/gray/white?text=Capa";
-
 export async function updateRestaurant(
   id: string,
   _prevState: ActionState | undefined,
   formData: FormData
 ): Promise<ActionState> {
+  // Verificar autenticação
+  const { userId } = await auth();
+  if (!userId) {
+    return { error: "Você precisa estar autenticado para editar um restaurante." };
+  }
+
+  // Verificar se o restaurante existe e pertence ao usuário
+  const restaurant = await db.restaurant.findUnique({
+    where: { id },
+  });
+
+  if (!restaurant) {
+    return { error: "Restaurante não encontrado." };
+  }
+
+  // Nota: Por enquanto não há coluna de userId no schema.
+  // Esta verificação será implementada após atualizar o schema do Prisma.
+  // TODO: Adicionar relação User-Restaurant no schema e ativar esta validação:
+  // if (restaurant.userId !== userId) {
+  //   return { error: "Você não tem permissão para editar este restaurante." };
+  // }
+
   const name = (formData.get("name") as string)?.trim();
   const slugRaw = (formData.get("slug") as string)?.trim();
   const description = (formData.get("description") as string)?.trim();
@@ -49,17 +55,20 @@ export async function updateRestaurant(
   // ----- Field validation -----
   const fieldErrors: ActionState["fieldErrors"] = {};
 
-  if (!name || name.length < 2)
-    fieldErrors.name = "Nome deve ter pelo menos 2 caracteres.";
+  // Validar nome
+  const nameError = validateRestaurantName(name);
+  if (nameError) fieldErrors.name = nameError;
 
-  if (!description || description.length < 10)
-    fieldErrors.description = "Descrição deve ter pelo menos 10 caracteres.";
+  // Validar descrição
+  const descError = validateRestaurantDescription(description);
+  if (descError) fieldErrors.description = descError;
 
-  if (avatarImageUrlRaw && !isValidUrl(avatarImageUrlRaw))
-    fieldErrors.avatarImageUrl = "URL da logo inválida. Use http:// ou https://";
+  // Validar URLs de imagem
+  const avatarError = validateImageUrl(avatarImageUrlRaw, "URL da logo");
+  if (avatarError) fieldErrors.avatarImageUrl = avatarError;
 
-  if (coverImageUrlRaw && !isValidUrl(coverImageUrlRaw))
-    fieldErrors.coverImageUrl = "URL da capa inválida. Use http:// ou https://";
+  const coverError = validateImageUrl(coverImageUrlRaw, "URL da capa");
+  if (coverError) fieldErrors.coverImageUrl = coverError;
 
   if (Object.keys(fieldErrors).length > 0) return { fieldErrors };
 
@@ -84,15 +93,13 @@ export async function updateRestaurant(
     };
 
   // ----- Image URLs (fallback to placeholders) -----
-  const avatarImageUrl =
-    avatarImageUrlRaw && isValidUrl(avatarImageUrlRaw)
-      ? avatarImageUrlRaw
-      : PLACEHOLDER_AVATAR;
+  const avatarImageUrl = avatarImageUrlRaw
+    ? avatarImageUrlRaw
+    : PLACEHOLDER_IMAGES.AVATAR;
 
-  const coverImageUrl =
-    coverImageUrlRaw && isValidUrl(coverImageUrlRaw)
-      ? coverImageUrlRaw
-      : PLACEHOLDER_COVER;
+  const coverImageUrl = coverImageUrlRaw
+    ? coverImageUrlRaw
+    : PLACEHOLDER_IMAGES.COVER;
 
   // ----- Persist -----
   try {
