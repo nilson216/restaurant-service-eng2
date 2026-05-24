@@ -36,7 +36,7 @@ const RestaurantCategories = ({ restaurant }: RestaurantCategoriesProps) => {
     setSelectedCategory(category);
   };
   const getCategoryButtonVariant = (category: MenuCategoriesWithProducts) => {
-    return selectedCategory.id === category.id ? "default" : "secondary";
+    return selectedCategory?.id === category.id ? "default" : "secondary";
   };
   return (
     <div className="relative z-50 mt-[-1.5rem] rounded-t-3xl bg-white">
@@ -76,8 +76,8 @@ const RestaurantCategories = ({ restaurant }: RestaurantCategoriesProps) => {
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
 
-      <h3 className="px-5 pt-2 font-semibold">{selectedCategory.name}</h3>
-      <Products products={selectedCategory.products} />
+      <h3 className="px-5 pt-2 font-semibold">{selectedCategory?.name}</h3>
+      {selectedCategory && <Products products={selectedCategory.products} />}
       {products.length > 0 && (
         <div className="fixed bottom-0 left-0 right-0 flex w-full items-center justify-between border-t bg-white px-5 py-3">
           <div>

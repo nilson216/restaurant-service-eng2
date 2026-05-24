@@ -1,6 +1,7 @@
 "use server";
 
 import { ConsumptionMethod } from "@prisma/client";
+import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/prisma";
@@ -57,6 +58,25 @@ export const createOrder = async (input: CreateOrderInput) => {
       restaurantId: restaurant.id,
     },
   });
+
+  // Clear cart after order
+  const { userId } = await auth();
+  if (userId) {
+    const cart = await db.cart.findUnique({
+      where: {
+        userId_restaurantId: {
+          userId,
+          restaurantId: restaurant.id,
+        },
+      },
+    });
+    if (cart) {
+      await db.cartItem.deleteMany({
+        where: { cartId: cart.id },
+      });
+    }
+  }
+
   revalidatePath(`/${input.slug}/orders`);
   // redirect(
   //   `/${input.slug}/orders?cpf=${removeCpfPunctuation(input.customerCpf)}`,

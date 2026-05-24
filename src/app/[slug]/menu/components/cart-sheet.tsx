@@ -16,12 +16,24 @@ import FinishOrderDialog from "./finish-order-dialog";
 
 const CartSheet = () => {
   const [finishOrderDialogIsOpen, setFinishOrderDialogIsOpen] = useState(false);
-  const { isOpen, toggleCart, products, total } = useContext(CartContext);
+  const { isOpen, toggleCart, products, total, clearCart } = useContext(CartContext);
   return (
     <Sheet open={isOpen} onOpenChange={toggleCart}>
       <SheetContent className="w-[80%]">
         <SheetHeader>
-          <SheetTitle className="text-left">Carrinho</SheetTitle>
+          <SheetTitle className="text-left flex justify-between items-center pr-4">
+            Carrinho
+            {products.length > 0 && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-xs text-red-500 h-8 px-2 hover:bg-red-50 hover:text-red-600"
+                onClick={clearCart}
+              >
+                Limpar
+              </Button>
+            )}
+          </SheetTitle>
         </SheetHeader>
         <div className="flex h-full flex-col py-5">
           <div className="flex-auto">

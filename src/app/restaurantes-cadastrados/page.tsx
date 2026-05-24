@@ -50,12 +50,12 @@ export default async function RestaurantesCadastradosPage({ searchParams }: Page
           <AlertCircle size={48} className="mx-auto mb-4 text-red-500" />
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Oops!</h1>
           <p className="text-gray-600 mb-6">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
+          <Link
+            href="/restaurantes-cadastrados"
             className="bg-[#00437A] hover:bg-[#005DA4] text-white font-semibold py-2 px-6 rounded-lg transition"
           >
             Tentar Novamente
-          </button>
+          </Link>
         </div>
       </div>
     );
