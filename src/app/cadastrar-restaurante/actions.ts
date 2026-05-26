@@ -83,10 +83,8 @@ export async function createRestaurant(
   const coverError = validateImageUrl(coverImageUrlRaw, "URL da capa");
   if (coverError) fieldErrors.coverImageUrl = coverError;
 
-  // Validar categorias
-  if (categories.length === 0) {
-    fieldErrors.categories = "Adicione pelo menos uma categoria.";
-  } else {
+  // Validar categorias (opcional no cadastro inicial)
+  if (categories.length > 0) {
     categories.forEach((cat, index) => {
       const catError = validateCategoryName(cat.name);
       if (catError) {
@@ -95,10 +93,8 @@ export async function createRestaurant(
     });
   }
 
-  // Validar produtos
-  if (products.length === 0) {
-    fieldErrors.products = "Adicione pelo menos um produto.";
-  } else {
+  // Validar produtos (opcional no cadastro inicial)
+  if (products.length > 0) {
     products.forEach((prod, index) => {
       const prodNameError = validateProductName(prod.name);
       if (prodNameError) fieldErrors[`product-name-${index}`] = prodNameError;

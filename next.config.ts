@@ -27,6 +27,20 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "tse1.mm.bing.net",
       },
+      {
+        protocol: "https",
+        hostname: "s2-receitas.glbimg.com",
+      },
+      {
+        protocol: "https",
+        hostname: "encrypted-tbn0.gstatic.com",
+      },
+      {
+        protocol: "https",
+        hostname: "fortatacadista.vteximg.com.br",
+      },
+
+
     ],
   },
 };
