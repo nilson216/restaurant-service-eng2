@@ -28,11 +28,6 @@ const RestaurantPage = async ({ params }: RestaurantPageProps) => {
             <ChevronLeft className="h-6 w-6" />
           </Link>
         </Button>
-        <SignOutButton redirectUrl="/">
-          <Button variant="outline" size="sm" className="rounded-full">
-            Sair
-          </Button>
-        </SignOutButton>
       </div>
       {/* LOGO E TITULO */}
       <div className="flex flex-col items-center gap-2">

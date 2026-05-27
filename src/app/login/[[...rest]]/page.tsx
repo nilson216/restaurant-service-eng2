@@ -15,7 +15,7 @@ export default function LoginPage() {
             className="rounded-lg shadow-md"
           />
           <div>
-            <h1 className="text-3xl font-bold text-[#00437A]">Restaurante</h1>
+            <h1 className="text-3xl font-bold text-[#00437A]">Univali Service</h1>
             <p className="text-sm text-gray-600">Gerenciador de Serviço</p>
           </div>
         </div>
