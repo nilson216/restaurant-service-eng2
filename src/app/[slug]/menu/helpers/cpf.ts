@@ -1,4 +1,5 @@
-export const removeCpfPunctuation = (cpf: string) => {
+export const removeCpfPunctuation = (cpf: string | undefined) => {
+  if (!cpf) return "";
   return cpf.replace(/[\.\-]/g, "");
 };
 

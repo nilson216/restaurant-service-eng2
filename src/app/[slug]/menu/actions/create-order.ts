@@ -3,6 +3,8 @@
 import { ConsumptionMethod } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
+import { formatCurrency } from "@/helpers/format-currency";
+import { sendOrderConfirmationEmail } from "@/lib/email";
 import { db } from "@/lib/prisma";
 
 import { removeCpfPunctuation } from "../helpers/cpf";
@@ -10,6 +12,7 @@ import { removeCpfPunctuation } from "../helpers/cpf";
 interface CreateOrderInput {
   customerName: string;
   customerCpf: string;
+  customerEmail: string;
   products: Array<{
     id: string;
     quantity: number;
@@ -44,6 +47,7 @@ export const createOrder = async (input: CreateOrderInput) => {
       status: "PENDING",
       customerName: input.customerName,
       customerCpf: removeCpfPunctuation(input.customerCpf),
+      customerEmail: input.customerEmail,
       orderProducts: {
         createMany: {
           data: productsWithPricesAndQuantities,
@@ -56,10 +60,37 @@ export const createOrder = async (input: CreateOrderInput) => {
       consumptionMethod: input.consumptionMethod,
       restaurantId: restaurant.id,
     },
+    include: {
+      orderProducts: {
+        include: {
+          product: true,
+        },
+      },
+    },
   });
-  revalidatePath(`/${input.slug}/orders`);
-  // redirect(
-  //   `/${input.slug}/orders?cpf=${removeCpfPunctuation(input.customerCpf)}`,
-  // );
+
+  // Enviar email de confirmação
+  try {
+    if (order.customerEmail) {
+      const items = order.orderProducts.map((op) => ({
+        name: op.product.name,
+        quantity: op.quantity,
+        price: formatCurrency(op.price),
+      }));
+
+      await sendOrderConfirmationEmail({
+        customerEmail: order.customerEmail,
+        customerName: order.customerName,
+        orderId: order.id.toString(),
+        totalAmount: formatCurrency(order.total),
+        items,
+        restaurantName: restaurant.name,
+      });
+    }
+  } catch (err) {
+    console.error("Erro ao enviar email de confirmação:", err);
+  }
+
+  revalidatePath(`/${input.slug}/menu`);
   return order;
 };

@@ -1,6 +1,10 @@
+import { SignOutButton } from "@clerk/nextjs";
+import { ChevronLeft } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { Button } from "@/components/ui/button";
 import { db } from "@/lib/prisma";
 
 import ConsumptionMethodOption from "./components/consumption-method-option";
@@ -17,6 +21,19 @@ const RestaurantPage = async ({ params }: RestaurantPageProps) => {
   }
   return (
     <div className="flex h-screen flex-col items-center justify-center px-6 pt-24">
+      {/* HEADER COM VOLTAR E LOGOUT */}
+      <div className="absolute left-6 top-6 flex w-full items-center justify-between">
+        <Button variant="ghost" size="icon" asChild className="rounded-full">
+          <Link href="/">
+            <ChevronLeft className="h-6 w-6" />
+          </Link>
+        </Button>
+        <SignOutButton redirectUrl="/">
+          <Button variant="outline" size="sm" className="rounded-full">
+            Sair
+          </Button>
+        </SignOutButton>
+      </div>
       {/* LOGO E TITULO */}
       <div className="flex flex-col items-center gap-2">
         <Image

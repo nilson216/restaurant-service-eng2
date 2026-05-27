@@ -1,6 +1,5 @@
 "use server";
 
-import { ConsumptionMethod } from "@prisma/client";
 import { headers } from "next/headers";
 import Stripe from "stripe";
 
@@ -10,10 +9,9 @@ import { CartProduct } from "../contexts/cart";
 import { removeCpfPunctuation } from "../helpers/cpf";
 
 interface CreateStripeCheckoutInput {
+  orderId: string;
   products: CartProduct[];
-  orderId: number;
   slug: string;
-  consumptionMethod: ConsumptionMethod;
   cpf: string;
 }
 
@@ -21,7 +19,6 @@ export const createStripeCheckout = async ({
   orderId,
   products,
   slug,
-  consumptionMethod,
   cpf,
 }: CreateStripeCheckoutInput) => {
   if (!process.env.STRIPE_SECRET_KEY) {
@@ -38,14 +35,12 @@ export const createStripeCheckout = async ({
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
     apiVersion: "2025-02-24.acacia",
   });
-  const searchParams = new URLSearchParams();
-  searchParams.set("consumptionMethod", consumptionMethod);
-  searchParams.set("cpf", removeCpfPunctuation(cpf));
+  const cleanCpf = removeCpfPunctuation(cpf);
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     mode: "payment",
-    success_url: `${origin}/${slug}/orders?${searchParams.toString()}`,
-    cancel_url: `${origin}/${slug}/orders?${searchParams.toString()}`,
+    success_url: `${origin}/${slug}/orders?cpf=${cleanCpf}`,
+    cancel_url: `${origin}/${slug}/orders?cpf=${cleanCpf}`,
     metadata: {
       orderId,
     },

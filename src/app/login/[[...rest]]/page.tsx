@@ -3,28 +3,34 @@ import Image from "next/image";
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-4">
-      {/* LOGO */}
-      <div className="mb-8 flex flex-col items-center gap-2">
-        <Image
-          src="/logo.png"
-          alt="MEC Donalds"
-          width={150}
-          height={150}
-          className="rounded-full shadow-lg"
-        />
-        <h1 className="text-xl font-bold tracking-tight text-[#00437A]">Univali Services</h1>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-gray-50 p-4">
+      {/* LOGO E HEADER */}
+      <div className="mb-8 flex flex-col items-center gap-4">
+        <div className="flex items-center gap-3">
+          <Image
+            src="/logo.png"
+            alt="Gerenciador de Serviços do Restaurante"
+            width={60}
+            height={60}
+            className="rounded-lg shadow-md"
+          />
+          <div>
+            <h1 className="text-3xl font-bold text-[#00437A]">Restaurante</h1>
+            <p className="text-sm text-gray-600">Gerenciador de Serviço</p>
+          </div>
+        </div>
       </div>
 
-      <SignIn 
+      <SignIn
         appearance={{
           elements: {
-            formButtonPrimary: "bg-[#00437A] hover:bg-[#005DA4] text-sm normal-case",
+            formButtonPrimary:
+              "bg-[#00437A] hover:bg-[#005DA4] text-sm normal-case",
             card: "shadow-xl border-none",
             headerTitle: "text-2xl font-bold text-gray-900",
             headerSubtitle: "text-gray-600",
-            footerActionLink: "text-[#00437A] hover:text-[#005DA4] font-bold"
-          }
+            footerActionLink: "text-[#00437A] hover:text-[#005DA4] font-bold",
+          },
         }}
       />
     </div>

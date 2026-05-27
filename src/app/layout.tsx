@@ -16,6 +16,9 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "Univali Services",
   description: "Univali Services",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({
@@ -27,9 +30,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${poppins.className} antialiased`}>
         <ClerkProvider>
-        <CartProvider>{children}</CartProvider>
+          <CartProvider>{children}</CartProvider>
         </ClerkProvider>
-        <Toaster/>
+        <Toaster />
       </body>
     </html>
   );

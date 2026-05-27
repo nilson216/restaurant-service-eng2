@@ -1,4 +1,12 @@
-import { AlertCircle, ChevronLeft, ChevronRight,CirclePlus, UtensilsCrossed } from "lucide-react";
+import { SignOutButton } from "@clerk/nextjs";
+import {
+  AlertCircle,
+  ChevronLeft,
+  ChevronRight,
+  CirclePlus,
+  LogOut,
+  UtensilsCrossed,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -11,14 +19,22 @@ interface PageProps {
   searchParams: Promise<{ page?: string }>;
 }
 
-export default async function RestaurantesCadastradosPage({ searchParams }: PageProps) {
+export default async function RestaurantesCadastradosPage({
+  searchParams,
+}: PageProps) {
   const { page: pageParam } = await searchParams;
   const currentPage = Math.max(1, parseInt(pageParam || "1", 10));
 
   type RestaurantWithCount = Awaited<
-    ReturnType<typeof db.restaurant.findMany<{
-      include: { _count: { select: { products: true; menuCategories: true; orders: true } } };
-    }>>
+    ReturnType<
+      typeof db.restaurant.findMany<{
+        include: {
+          _count: {
+            select: { products: true; menuCategories: true; orders: true };
+          };
+        };
+      }>
+    >
   >;
 
   let restaurants: RestaurantWithCount = [];
@@ -35,7 +51,9 @@ export default async function RestaurantesCadastradosPage({ searchParams }: Page
       skip: (currentPage - 1) * RESTAURANTS_PER_PAGE,
       take: RESTAURANTS_PER_PAGE,
       include: {
-        _count: { select: { products: true, menuCategories: true, orders: true } },
+        _count: {
+          select: { products: true, menuCategories: true, orders: true },
+        },
       },
     });
   } catch (err) {
@@ -45,14 +63,14 @@ export default async function RestaurantesCadastradosPage({ searchParams }: Page
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 text-gray-900 flex items-center justify-center p-4">
-        <div className="text-center max-w-md">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4 text-gray-900">
+        <div className="max-w-md text-center">
           <AlertCircle size={48} className="mx-auto mb-4 text-red-500" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Oops!</h1>
-          <p className="text-gray-600 mb-6">{error}</p>
+          <h1 className="mb-2 text-2xl font-bold text-gray-900">Oops!</h1>
+          <p className="mb-6 text-gray-600">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="bg-[#00437A] hover:bg-[#005DA4] text-white font-semibold py-2 px-6 rounded-lg transition"
+            className="rounded-lg bg-[#00437A] px-6 py-2 font-semibold text-white transition hover:bg-[#005DA4]"
           >
             Tentar Novamente
           </button>
@@ -69,7 +87,7 @@ export default async function RestaurantesCadastradosPage({ searchParams }: Page
     <div className="min-h-screen bg-gray-50 text-gray-900">
       <div className="relative mx-auto max-w-6xl px-6 py-12">
         {/* Header */}
-        <div className="mb-10 flex flex-row gap-4 sm:flex-row sm:items-center sm:justify-between ">
+        <div className="mb-10 flex flex-row gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-[#00437A]">
               Painel de gestão
@@ -79,24 +97,38 @@ export default async function RestaurantesCadastradosPage({ searchParams }: Page
             </h1>
             <p className="mt-1 text-sm text-gray-500">
               {restaurants.length}{" "}
-              {restaurants.length === 1 ? "restaurante cadastrado" : "restaurantes cadastrados"}
+              {restaurants.length === 1
+                ? "restaurante cadastrado"
+                : "restaurantes cadastrados"}
             </p>
           </div>
 
-          <Link
-            href="/cadastrar-restaurante"
-            className="rounded-lg pl-13 text-[#000000] hover:bg-gray-200 transition m"
-            title="Novo Restaurante"
-          >
-            <CirclePlus size={32} />
-          </Link>
+          <div className="flex gap-2">
+            <Link
+              href="/cadastrar-restaurante"
+              className="rounded-lg p-2 text-[#000000] transition hover:bg-gray-200"
+              title="Novo Restaurante"
+            >
+              <CirclePlus size={32} />
+            </Link>
+            <SignOutButton redirectUrl="/login">
+              <button
+                className="rounded-lg p-2 text-gray-600 transition hover:bg-red-100"
+                title="Deslogar"
+              >
+                <LogOut size={32} />
+              </button>
+            </SignOutButton>
+          </div>
         </div>
 
         {/* Empty state */}
         {restaurants.length === 0 && (
           <div className="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-white py-24 text-center shadow-sm">
             <UtensilsCrossed size={48} className="mb-4 text-gray-300" />
-            <p className="text-lg font-semibold text-gray-700">Nenhum restaurante cadastrado</p>
+            <p className="text-lg font-semibold text-gray-700">
+              Nenhum restaurante cadastrado
+            </p>
             <p className="mt-1 text-sm text-gray-400">
               Clique em &ldquo;Novo Restaurante&rdquo; para começar.
             </p>
@@ -240,7 +272,8 @@ export default async function RestaurantesCadastradosPage({ searchParams }: Page
         {/* Page info */}
         {totalPages > 1 && (
           <p className="mt-4 text-center text-sm text-gray-500">
-            Página {currentPage} de {totalPages} • Exibindo {restaurants.length} de {totalCount} restaurantes
+            Página {currentPage} de {totalPages} • Exibindo {restaurants.length}{" "}
+            de {totalCount} restaurantes
           </p>
         )}
       </div>

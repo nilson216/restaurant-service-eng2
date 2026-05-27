@@ -7,10 +7,10 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/prisma";
 import {
   generateSlug,
-  validateRestaurantName,
-  validateRestaurantDescription,
-  validateImageUrl,
   PLACEHOLDER_IMAGES,
+  validateImageUrl,
+  validateRestaurantDescription,
+  validateRestaurantName,
 } from "@/lib/validators";
 
 export type ActionState = {

@@ -29,18 +29,16 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "s2-receitas.glbimg.com",
+        hostname: "**.glbimg.com", // imagens do globo
       },
       {
         protocol: "https",
-        hostname: "encrypted-tbn0.gstatic.com",
+        hostname: "**.gstatic.com", // imagens do Google
       },
       {
         protocol: "https",
-        hostname: "fortatacadista.vteximg.com.br",
+        hostname: "fortatacadista.vteximg.com.br", // imagens de produtos
       },
-
-
     ],
   },
 };

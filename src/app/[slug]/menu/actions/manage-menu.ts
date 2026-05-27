@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+
 import { db } from "@/lib/prisma";
 import { validateCategoryName, validateProductName, validateProductPrice } from "@/lib/validators";
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useUser } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ConsumptionMethod } from "@prisma/client";
 import { loadStripe } from "@stripe/stripe-js";
@@ -62,6 +63,7 @@ const FinishOrderDialog = ({ open, onOpenChange }: FinishOrderDialogProps) => {
   const { slug } = useParams<{ slug: string }>();
   const { products } = useContext(CartContext);
   const searchParams = useSearchParams();
+  const { user } = useUser();
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -78,18 +80,26 @@ const FinishOrderDialog = ({ open, onOpenChange }: FinishOrderDialogProps) => {
         "consumptionMethod",
       ) as ConsumptionMethod;
 
+      const customerEmail = user?.primaryEmailAddress?.emailAddress;
+      if (!customerEmail) {
+        throw new Error("Email do usuário não encontrado");
+      }
+
+      // Criar pedido imediatamente
       const order = await createOrder({
+        products,
+        slug,
         consumptionMethod,
         customerCpf: data.cpf,
         customerName: data.name,
-        products,
-        slug,
+        customerEmail,
       });
+
+      // Criar sessão Stripe
       const { sessionId } = await createStripeCheckout({
+        orderId: order.id.toString(),
         products,
-        orderId: order.id,
         slug,
-        consumptionMethod,
         cpf: data.cpf,
       });
       if (!process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY) return;
