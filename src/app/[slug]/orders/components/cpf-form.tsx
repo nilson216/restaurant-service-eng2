@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
 import { z } from "zod";
@@ -48,11 +48,12 @@ const CpfForm = () => {
   });
   const router = useRouter();
   const pathname = usePathname();
+  const { slug } = useParams<{ slug: string }>();
   const onSubmit = (data: FormSchema) => {
     router.replace(`${pathname}?cpf=${removeCpfPunctuation(data.cpf)}`);
   };
   const handleCancel = () => {
-    router.back();
+    router.push(`/${slug}`);
   };
   return (
     <Drawer open>
