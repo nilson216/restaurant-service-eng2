@@ -3,7 +3,7 @@
 import { Prisma } from "@prisma/client";
 import { ClockIcon, PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
 import Image from "next/image";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -30,26 +30,33 @@ type MenuCategoriesWithProducts = Prisma.MenuCategoryGetPayload<{
 }>;
 
 const RestaurantCategories = ({ restaurant }: RestaurantCategoriesProps) => {
-  const [selectedCategory, setSelectedCategory] =
-    useState<MenuCategoriesWithProducts>(restaurant.menuCategories[0]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
+    restaurant.menuCategories[0]?.id,
+  );
 
-  // Atualiza a categoria selecionada se ela não existir mais (ex: foi excluída)
-  // ou se a lista de categorias era vazia e agora tem itens
-  if (selectedCategory && !restaurant.menuCategories.find(c => c.id === selectedCategory.id)) {
-    setSelectedCategory(restaurant.menuCategories[0]);
-  } else if (!selectedCategory && restaurant.menuCategories.length > 0) {
-    setSelectedCategory(restaurant.menuCategories[0]);
-  }
+  const selectedCategory = restaurant.menuCategories.find(
+    (c) => c.id === selectedCategoryId,
+  ) || restaurant.menuCategories[0];
+
+  // Se a categoria selecionada não existe mais, reseta para a primeira
+  useEffect(() => {
+    if (selectedCategoryId && !restaurant.menuCategories.find(c => c.id === selectedCategoryId)) {
+      setSelectedCategoryId(restaurant.menuCategories[0]?.id);
+    } else if (!selectedCategoryId && restaurant.menuCategories.length > 0) {
+      setSelectedCategoryId(restaurant.menuCategories[0]?.id);
+    }
+  }, [restaurant.menuCategories, selectedCategoryId]);
+
   const [isManageCategoryOpen, setIsManageCategoryOpen] = useState(false);
   const [categoryToEdit, setCategoryToEdit] = useState<MenuCategoriesWithProducts | undefined>();
 
   const { products, total, toggleCart, totalQuantity } =
     useContext(CartContext);
   const handleCategoryClick = (category: MenuCategoriesWithProducts) => {
-    setSelectedCategory(category);
+    setSelectedCategoryId(category.id);
   };
   const getCategoryButtonVariant = (category: MenuCategoriesWithProducts) => {
-    return selectedCategory.id === category.id ? "default" : "secondary";
+    return selectedCategory?.id === category.id ? "default" : "secondary";
   };
 
   const handleAddCategory = () => {

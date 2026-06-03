@@ -1,6 +1,5 @@
 import { SignOutButton } from "@clerk/nextjs";
 import {
-  AlertCircle,
   ChevronLeft,
   ChevronRight,
   CirclePlus,
@@ -12,6 +11,8 @@ import Link from "next/link";
 
 import { db } from "@/lib/prisma";
 import { isValidUrl } from "@/lib/validators";
+
+import ErrorState from "./components/error-state";
 
 const RESTAURANTS_PER_PAGE = 12;
 
@@ -62,21 +63,7 @@ export default async function RestaurantesCadastradosPage({
   }
 
   if (error) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4 text-gray-900">
-        <div className="max-w-md text-center">
-          <AlertCircle size={48} className="mx-auto mb-4 text-red-500" />
-          <h1 className="mb-2 text-2xl font-bold text-gray-900">Oops!</h1>
-          <p className="mb-6 text-gray-600">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="rounded-lg bg-[#00437A] px-6 py-2 font-semibold text-white transition hover:bg-[#005DA4]"
-          >
-            Tentar Novamente
-          </button>
-        </div>
-      </div>
-    );
+    return <ErrorState error={error} />;
   }
 
   const totalPages = Math.ceil(totalCount / RESTAURANTS_PER_PAGE);
@@ -273,7 +260,7 @@ export default async function RestaurantesCadastradosPage({
         {totalPages > 1 && (
           <p className="mt-4 text-center text-sm text-gray-500">
             Página {currentPage} de {totalPages} • Exibindo {restaurants.length}{" "}
-            de {totalCount} restaurantes
+            de {totalCount} restaurants
           </p>
         )}
       </div>
