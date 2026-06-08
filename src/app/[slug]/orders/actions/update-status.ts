@@ -1,8 +1,9 @@
 "use server";
 
 import { OrderStatus } from "@prisma/client";
-import { db } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+
+import { db } from "@/lib/prisma";
 
 export const updateOrderStatus = async (
   orderId: number,

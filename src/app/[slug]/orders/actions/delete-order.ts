@@ -1,7 +1,8 @@
 "use server";
 
-import { db } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+
+import { db } from "@/lib/prisma";
 
 export const deleteOrder = async (orderId: number, slug: string) => {
   try {
