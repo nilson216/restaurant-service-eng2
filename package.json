@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run"
   },
   "prisma": {
     "seed": "ts-node ./prisma/seed.ts"
@@ -50,6 +52,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "cypress": "^15.18.0",
     "eslint": "^9",
     "eslint-config-next": "15.2.8",
     "eslint-plugin-simple-import-sort": "^12.1.1",

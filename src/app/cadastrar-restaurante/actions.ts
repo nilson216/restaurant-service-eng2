@@ -3,6 +3,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { z } from "zod";
 
 import { db } from "@/lib/prisma";
 import {
@@ -10,11 +11,8 @@ import {
   isValidUrl,
   PLACEHOLDER_IMAGES,
   validateCategoryName,
-  validateImageUrl,
   validateProductName,
   validateProductPrice,
-  validateRestaurantDescription,
-  validateRestaurantName,
 } from "@/lib/validators";
 
 export type ActionState = {
@@ -36,14 +34,50 @@ interface ProductData {
   categoryTempId: string;
 }
 
+const restaurantFormSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(2, { message: "Nome deve ter pelo menos 2 caracteres." })
+    .max(100, { message: "Nome não pode exceder 100 caracteres." }),
+  slug: z
+    .string()
+    .trim()
+    .min(2, {
+      message: "A URL personalizada deve ter pelo menos 2 caracteres.",
+    })
+    .max(50, {
+      message: "A URL personalizada não pode exceder 50 caracteres.",
+    }),
+  description: z
+    .string()
+    .trim()
+    .min(10, { message: "Descrição deve ter pelo menos 10 caracteres." })
+    .max(500, { message: "Descrição não pode exceder 500 caracteres." }),
+  avatarImageUrl: z
+    .string()
+    .trim()
+    .refine((value) => value === "" || isValidUrl(value), {
+      message: "URL da logo inválida.",
+    }),
+  coverImageUrl: z
+    .string()
+    .trim()
+    .refine((value) => value === "" || isValidUrl(value), {
+      message: "URL da capa inválida.",
+    }),
+});
+
 export async function createRestaurant(
   _prevState: ActionState | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionState> {
   // Verificar autenticação
   const { userId } = await auth();
   if (!userId) {
-    return { error: "Você precisa estar autenticado para criar um restaurante." };
+    return {
+      error: "Você precisa estar autenticado para criar um restaurante.",
+    };
   }
 
   const name = (formData.get("name") as string)?.trim();
@@ -68,20 +102,25 @@ export async function createRestaurant(
   // ----- Field validation -----
   const fieldErrors: ActionState["fieldErrors"] = {};
 
-  // Validar nome
-  const nameError = validateRestaurantName(name);
-  if (nameError) fieldErrors.name = nameError;
+  const parsedRestaurantFields = restaurantFormSchema.safeParse({
+    name,
+    slug: slugRaw || generateSlug(name || ""),
+    description,
+    avatarImageUrl: avatarImageUrlRaw || "",
+    coverImageUrl: coverImageUrlRaw || "",
+  });
 
-  // Validar descrição
-  const descError = validateRestaurantDescription(description);
-  if (descError) fieldErrors.description = descError;
-
-  // Validar URLs de imagem
-  const avatarError = validateImageUrl(avatarImageUrlRaw, "URL da logo");
-  if (avatarError) fieldErrors.avatarImageUrl = avatarError;
-
-  const coverError = validateImageUrl(coverImageUrlRaw, "URL da capa");
-  if (coverError) fieldErrors.coverImageUrl = coverError;
+  if (!parsedRestaurantFields.success) {
+    const flattened = parsedRestaurantFields.error.flatten().fieldErrors;
+    if (flattened.name?.[0]) fieldErrors.name = flattened.name[0];
+    if (flattened.slug?.[0]) fieldErrors.slug = flattened.slug[0];
+    if (flattened.description?.[0])
+      fieldErrors.description = flattened.description[0];
+    if (flattened.avatarImageUrl?.[0])
+      fieldErrors.avatarImageUrl = flattened.avatarImageUrl[0];
+    if (flattened.coverImageUrl?.[0])
+      fieldErrors.coverImageUrl = flattened.coverImageUrl[0];
+  }
 
   // Validar categorias (opcional no cadastro inicial)
   if (categories.length > 0) {
@@ -113,7 +152,7 @@ export async function createRestaurant(
   }
 
   // ----- Slug handling -----
-  const slug = slugRaw || generateSlug(name);
+  const slug = slugRaw || generateSlug(name || "");
 
   const slugConflict = await db.restaurant.findUnique({ where: { slug } });
   if (slugConflict)
@@ -167,7 +206,8 @@ export async function createRestaurant(
             name: prod.name,
             description: prod.description || "",
             price: prod.price,
-            imageUrl: prod.imageUrl || "https://placehold.co/400x400?text=Produto",
+            imageUrl:
+              prod.imageUrl || "https://placehold.co/400x400?text=Produto",
             restaurantId: restaurant.id,
             menuCategoryId: categoryId,
           },

@@ -22,7 +22,10 @@ export function RedirectHome() {
   }, [isLoaded, userId, router]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-white">
+    <div
+      className="flex min-h-screen items-center justify-center bg-white"
+      data-cy="redirect-home-loading"
+    >
       <div className="text-center">
         <div className="mb-4 inline-block">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>

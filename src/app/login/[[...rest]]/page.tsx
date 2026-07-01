@@ -3,9 +3,15 @@ import Image from "next/image";
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-gray-50 p-4">
+    <div
+      className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-gray-50 p-4"
+      data-cy="login-page"
+    >
       {/* LOGO E HEADER */}
-      <div className="mb-8 flex flex-col items-center gap-4">
+      <div
+        className="mb-8 flex flex-col items-center gap-4"
+        data-cy="login-brand"
+      >
         <div className="flex items-center gap-3">
           <Image
             src="/logo.png"
@@ -15,7 +21,9 @@ export default function LoginPage() {
             className="rounded-lg shadow-md"
           />
           <div>
-            <h1 className="text-3xl font-bold text-[#00437A]">Univali Service</h1>
+            <h1 className="text-3xl font-bold text-[#00437A]">
+              Univali Service
+            </h1>
             <p className="text-sm text-gray-600">Gerenciador de Serviço</p>
           </div>
         </div>
