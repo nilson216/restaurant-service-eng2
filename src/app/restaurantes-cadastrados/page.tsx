@@ -12,6 +12,7 @@ import Link from "next/link";
 import { db } from "@/lib/prisma";
 import { isValidUrl } from "@/lib/validators";
 
+import DeleteRestaurantButton from "./components/delete-restaurant-button";
 import ErrorState from "./components/error-state";
 
 const RESTAURANTS_PER_PAGE = 12;
@@ -185,7 +186,7 @@ export default async function RestaurantesCadastradosPage({
                   </p>
 
                   {/* Actions */}
-                  <div className="mt-auto flex gap-2">
+                  <div className="mt-auto grid grid-cols-2 gap-2">
                     <Link
                       href={`/${r.slug}`}
                       className="flex-1 rounded-xl border border-gray-200 bg-white py-2 text-center text-sm font-medium text-gray-600 transition hover:border-[#00437A]/30 hover:text-gray-900"
@@ -198,6 +199,7 @@ export default async function RestaurantesCadastradosPage({
                     >
                       Editar
                     </Link>
+                    <DeleteRestaurantButton restaurantId={r.id} restaurantName={r.name} />
                   </div>
                 </div>
               </div>
